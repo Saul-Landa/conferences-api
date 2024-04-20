@@ -32,3 +32,4 @@ $ docker compose up -d
 $ mvnw.cmd clean install -DskipTests
 ```
     
+Test
