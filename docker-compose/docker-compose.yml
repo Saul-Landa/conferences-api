@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  eureka-server:
+    image: eureka-server:1.0.0
+    ports:
+      - "8761:8761"
+    restart: always
+    networks:
+      - spring-cloud
+
+  microservices-mysql8:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    restart: always
+    networks:
+      - spring-cloud
+    environment:
+      MYSQL_DATABASE: calendar
+      MYSQL_ROOT_PASSWORD: root
+
+  users-service:
+    image: users-service:1.0.0
+    restart: always
+    networks:
+      - spring-cloud
+    depends_on:
+      - eureka-server
+      - microservices-mysql8
+
+  conferences-service:
+    image: conferences-service:1.0.0
+    restart: always
+    networks:
+      - spring-cloud
+    depends_on:
+      - eureka-server
+      - microservices-mysql8
+      - users-service
+  
+  gateway-server:
+    image: gateway-server:1.0.0
+    ports:
+      - "8090:8090"
+    restart: always
+    networks:
+      - spring-cloud
+    depends_on:
+      - eureka-server
+      - users-service
+      - conferences-service
+
+networks:
+  spring-cloud:
